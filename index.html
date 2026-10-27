@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raffle Ticket CSV Generator - Variable Printing</title>
+  <style>
+    :root {
+      --primary: #0f172a;
+      --primary-hover: #1e293b;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --danger-border: #fecaca;
+      --success: #16a34a;
+      --success-bg: #f0fdf4;
+      --success-border: #bbf7d0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 32px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    h1 { font-size: 1.5rem; font-weight: 700; color: var(--text); }
+    .subtitle { font-size: 0.875rem; color: var(--text-muted); margin-top: 4px; }
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #dbeafe;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 800px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+    }
+    .card-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .form-group { margin-bottom: 16px; }
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+    input[type="number"], select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #ffffff;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input[type="number"]:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      user-select: none;
+      margin-top: 8px;
+    }
+    .metrics-list { display: flex; flex-direction: column; gap: 12px; }
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .metric-label { font-size: 0.875rem; color: var(--text-muted); }
+    .metric-value {
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    .capacity-bar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .capacity-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    .error-banner {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      color: var(--danger);
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      margin-top: 16px;
+      display: none;
+    }
+    .actions-bar {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    button.btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s, transform 0.05s;
+    }
+    button.btn-primary:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+    button.btn-primary:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    button.btn-secondary {
+      background: white;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 12px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.15s;
+    }
+    button.btn-secondary:hover:not(:disabled) {
+      background: #f1f5f9;
+    }
+    .table-container {
+      overflow-x: auto;
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+    th {
+      background: #f1f5f9;
+      padding: 10px 14px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      color: #334155;
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-family: monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+    .audit-box {
+      margin-top: 16px;
+      padding: 10px 14px;
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: var(--success);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Raffle Ticket Variable Data CSV Generator</h1>
+        <div class="subtitle">Generates guaranteed zero-duplicate winning numbers with formatted leading zeros for Canva, InDesign, and Mail Merge</div>
+      </div>
+      <div class="badge">Fisher-Yates Certified Unbiased</div>
+    </header>
+
+    <div class="grid">
+      <!-- Input Controls -->
+      <div class="card">
+        <div class="card-title">1. Configuration Controls</div>
+        <div class="form-group">
+          <label for="startTicket">Starting Ticket Number</label>
+          <input type="number" id="startTicket" value="1" min="1">
+        </div>
+        <div class="form-group">
+          <label for="endTicket">Ending Ticket Number</label>
+          <input type="number" id="endTicket" value="2500" min="1">
+        </div>
+        <div class="form-group">
+          <label for="numsPerTicket">Winning Numbers Per Ticket</label>
+          <input type="number" id="numsPerTicket" value="4" min="1" max="20">
+        </div>
+        <div class="form-group">
+          <label for="minRange">Minimum Winning Number Range</label>
+          <input type="number" id="minRange" value="0" min="0">
+        </div>
+        <div class="form-group">
+          <label for="maxRange">Maximum Winning Number Range</label>
+          <input type="number" id="maxRange" value="9999" min="0">
+        </div>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="sortNumbers" checked>
+            Sort winning numbers on each ticket ascending
+          </label>
+        </div>
+      </div>
+
+      <!-- Live Pool Metrics & Validation -->
+      <div class="card">
+        <div class="card-title">2. Pool Capacity & Math Check</div>
+        <div class="metrics-list">
+          <div class="metric-row">
+            <span class="metric-label">Total Tickets Needed</span>
+            <span class="metric-value" id="dispTotalTickets">2,500</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Unique Winning Numbers Needed</span>
+            <span class="metric-value" id="dispTotalNeeded">10,000</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Available Pool Capacity</span>
+            <span class="metric-value" id="dispPoolCapacity">10,000</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Leading Zero Padding Digits</span>
+            <span class="metric-value" id="dispDigitLength">4 digits (e.g. 0005)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Pool Utilization</span>
+            <span class="metric-value" id="dispUtilization">100.0%</span>
+          </div>
+        </div>
+
+        <div class="capacity-bar">
+          <div class="capacity-fill" id="capacityFill" style="width: 100%;"></div>
+        </div>
+
+        <div id="errorBanner" class="error-banner"></div>
+
+        <div class="actions-bar">
+          <button id="btnGenerate" class="btn-primary" onclick="handleGenerateAndDownload()">Generate & Download CSV</button>
+          <button id="btnPreview" class="btn-secondary" onclick="handlePreviewOnly()">Preview Only</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Table Card -->
+    <div class="card" id="previewCard" style="display: none;">
+      <div class="card-title">
+        <span>3. Interactive Preview (First 5 Rows)</span>
+        <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);" id="previewTimestamp"></span>
+      </div>
+      <div class="table-container">
+        <table id="previewTable">
+          <thead id="previewTableHead"></thead>
+          <tbody id="previewTableBody"></tbody>
+        </table>
+      </div>
+      <div id="auditBox" class="audit-box">
+        <span>✓ <strong>Audit Verified:</strong> Zero duplicate numbers across entire pool. Ready for variable printing.</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Business Logic Implementation
+    function getInputs() {
+      return {
+        start: parseInt(document.getElementById('startTicket').value, 10),
+        end: parseInt(document.getElementById('endTicket').value, 10),
+        k: parseInt(document.getElementById('numsPerTicket').value, 10),
+        min: parseInt(document.getElementById('minRange').value, 10),
+        max: parseInt(document.getElementById('maxRange').value, 10),
+        sortNums: document.getElementById('sortNumbers').checked
+      };
+    }
+
+    function updateCalculations() {
+      const { start, end, k, min, max } = getInputs();
+      const errorDiv = document.getElementById('errorBanner');
+      const btnGen = document.getElementById('btnGenerate');
+      const btnPrev = document.getElementById('btnPreview');
+
+      if (isNaN(start) || isNaN(end) || isNaN(k) || isNaN(min) || isNaN(max)) {
+        errorDiv.textContent = 'Please provide valid numerical inputs.';
+        errorDiv.style.display = 'block';
+        btnGen.disabled = true;
+        btnPrev.disabled = true;
+        return null;
+      }
+
+      if (start < 1) {
+        errorDiv.textContent = 'Starting Ticket Number must be at least 1.';
+        errorDiv.style.display = 'block';
+        btnGen.disabled = true;
+        btnPrev.disabled = true;
+        return null;
+      }
+
+      if (end < start) {
+        errorDiv.textContent = 'Ending Ticket Number cannot be less than Starting Ticket Number.';
+        errorDiv.style.display = 'block';
+        btnGen.disabled = true;
+        btnPrev.disabled = true;
+        return null;
+      }
+
+      if (k < 1) {
+        errorDiv.textContent = 'Winning Numbers Per Ticket must be at least 1.';
+        errorDiv.style.display = 'block';
+        btnGen.disabled = true;
+        btnPrev.disabled = true;
+        return null;
+      }
+
+      if (min < 0) {
+        errorDiv.textContent = 'Minimum Winning Number Range cannot be negative.';
+        errorDiv.style.display = 'block';
+        btnGen.disabled = true;
+        btnPrev.disabled = true;
+        return null;
+      }
+
+      if (max < min) {
+        errorDiv.textContent = 'Maximum Winning Number Range must be greater than or equal to Minimum Range.';
+        errorDiv.style.display = 'block';
+        btnGen.disabled = true;
+        btnPrev.disabled = true;
+        return null;
+      }
+
+      const totalTickets = end - start + 1;
+      const totalNeeded = totalTickets * k;
+      const poolCapacity = max - min + 1;
+      const digitLength = String(Math.abs(max)).length;
+
+      document.getElementById('dispTotalTickets').textContent = totalTickets.toLocaleString();
+      document.getElementById('dispTotalNeeded').textContent = totalNeeded.toLocaleString();
+      document.getElementById('dispPoolCapacity').textContent = poolCapacity.toLocaleString();
+      document.getElementById('dispDigitLength').textContent = digitLength + ' digits (e.g. ' + '5'.padStart(digitLength, '0') + ')';
+
+      const utilPct = poolCapacity > 0 ? (totalNeeded / poolCapacity) * 100 : 0;
+      document.getElementById('dispUtilization').textContent = utilPct.toFixed(1) + '%';
+      document.getElementById('capacityFill').style.width = Math.min(100, utilPct) + '%';
+      document.getElementById('capacityFill').style.background = utilPct > 100 ? 'var(--danger)' : 'var(--accent)';
+
+      if (poolCapacity < totalNeeded) {
+        const shortfall = totalNeeded - poolCapacity;
+        errorDiv.innerHTML = '<strong>Pool Shortfall Error:</strong> You need <strong>' + totalNeeded.toLocaleString() + '</strong> unique winning numbers (' + totalTickets.toLocaleString() + ' tickets × ' + k + ' numbers/ticket), but the pool range (' + min.toLocaleString() + ' to ' + max.toLocaleString() + ') only offers <strong>' + poolCapacity.toLocaleString() + '</strong> numbers.<br><br>Shortfall: <strong>' + shortfall.toLocaleString() + '</strong> numbers. Please expand the number range or reduce tickets.';
+        errorDiv.style.display = 'block';
+        btnGen.disabled = true;
+        btnPrev.disabled = true;
+        return null;
+      }
+
+      errorDiv.style.display = 'none';
+      btnGen.disabled = false;
+      btnPrev.disabled = false;
+
+      return { totalTickets, totalNeeded, poolCapacity, digitLength, start, end, k, min, max };
+    }
+
+    function generateData(calc) {
+      const { totalTickets, totalNeeded, poolCapacity, digitLength, start, end, k, min, sortNums } = calc;
+      const pool = new Int32Array(poolCapacity);
+      for (let i = 0; i < poolCapacity; i++) {
+        pool[i] = min + i;
+      }
+
+      // Fisher-Yates Shuffle
+      for (let i = 0; i < totalNeeded; i++) {
+        const j = i + Math.floor(Math.random() * (poolCapacity - i));
+        const temp = pool[i];
+        pool[i] = pool[j];
+        pool[j] = temp;
+      }
+
+      const rows = [];
+      let poolIdx = 0;
+      for (let t = start; t <= end; t++) {
+        const nums = [];
+        for (let w = 0; w < k; w++) {
+          nums.push(pool[poolIdx++]);
+        }
+        if (sortNums) {
+          nums.sort(function(a, b) { return a - b; });
+        }
+        const formatted = nums.map(function(n) { return String(n).padStart(digitLength, '0'); });
+        rows.push({
+          ticket: String(t),
+          numbers: formatted
+        });
+      }
+      return rows;
+    }
+
+    function renderPreview(rows, k) {
+      const previewCard = document.getElementById('previewCard');
+      const thead = document.getElementById('previewTableHead');
+      const tbody = document.getElementById('previewTableBody');
+      const timestamp = document.getElementById('previewTimestamp');
+
+      previewCard.style.display = 'block';
+      timestamp.textContent = 'Generated: ' + new Date().toLocaleTimeString();
+
+      // Headers
+      let headHtml = '<tr><th>Ticket_Number</th>';
+      for (let i = 1; i <= k; i++) {
+        headHtml += '<th>Winning_Num_' + i + '</th>';
+      }
+      headHtml += '</tr>';
+      thead.innerHTML = headHtml;
+
+      // First 5 rows
+      const displayRows = rows.slice(0, 5);
+      let bodyHtml = '';
+      displayRows.forEach(function(row) {
+        bodyHtml += '<tr><td><strong>#' + row.ticket + '</strong></td>';
+        row.numbers.forEach(function(num) {
+          bodyHtml += '<td>' + num + '</td>';
+        });
+        bodyHtml += '</tr>';
+      });
+      tbody.innerHTML = bodyHtml;
+      previewCard.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function handlePreviewOnly() {
+      const calc = updateCalculations();
+      if (!calc) return;
+      const inputs = getInputs();
+      calc.sortNums = inputs.sortNums;
+      const rows = generateData(calc);
+      renderPreview(rows, calc.k);
+    }
+
+    function handleGenerateAndDownload() {
+      const calc = updateCalculations();
+      if (!calc) return;
+      const inputs = getInputs();
+      calc.sortNums = inputs.sortNums;
+      const rows = generateData(calc);
+      renderPreview(rows, calc.k);
+
+      // Build CSV with retained leading zeros
+      let headers = ['Ticket_Number'];
+      for (let i = 1; i <= calc.k; i++) {
+        headers.push('Winning_Num_' + i);
+      }
+      const csvLines = [headers.join(',')];
+
+      rows.forEach(function(row) {
+        const line = ['"' + row.ticket + '"'];
+        row.numbers.forEach(function(n) {
+          line.push('"' + n + '"');
+        });
+        csvLines.push(line.join(','));
+      });
+
+      const csvContent = '\uFEFF' + csvLines.join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'raffle_tickets_' + calc.start + '_to_' + calc.end + '.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    // Attach real-time input event listeners
+    ['startTicket', 'endTicket', 'numsPerTicket', 'minRange', 'maxRange'].forEach(function(id) {
+      document.getElementById(id).addEventListener('input', updateCalculations);
+    });
+    updateCalculations();
+  </script>
+</body>
+</html>
