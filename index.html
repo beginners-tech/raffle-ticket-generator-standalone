@@ -3,335 +3,1312 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Raffle Ticket CSV Generator - Variable Printing</title>
+  <title>Raffle Ticket CSV Generator</title>
+  <meta name="description" content="Generate and export randomized, zero-duplicate winning numbers and formatted ticket data for variable data printing, Canva, and Mail Merge.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
     :root {
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --bg-canvas: #f8fafc;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f9;
+      --border: #e2e8f0;
+      --border-subtle: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
       --primary: #0f172a;
       --primary-hover: #1e293b;
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --border: #e2e8f0;
-      --text: #0f172a;
-      --text-muted: #64748b;
-      --danger: #dc2626;
-      --danger-bg: #fef2f2;
-      --danger-border: #fecaca;
-      --success: #16a34a;
-      --success-bg: #f0fdf4;
-      --success-border: #bbf7d0;
+      --amber: #f59e0b;
+      --amber-hover: #d97706;
+      --emerald-bg: #ecfdf5;
+      --emerald-border: #a7f3d0;
+      --emerald-text: #065f46;
+      --rose-bg: #fff1f2;
+      --rose-border: #fecdd3;
+      --rose-text: #9f1239;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      padding: 24px;
-    }
-    .container { max-width: 1100px; margin: 0 auto; }
-    header {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px 32px;
-      margin-bottom: 24px;
+      font-family: var(--font-sans);
+      background-color: var(--bg-canvas);
+      color: var(--text-main);
+      min-height: 100vh;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-mono {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+    /* Top Bar */
+    header {
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
       align-items: center;
-      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 32px;
+    }
+    .brand-zone {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background-color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+    }
+    .brand-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.15s;
+    }
+    .nav-btn:hover { color: var(--text-main); }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    /* Main Layout */
+    main {
+      flex: 1;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+    .hero-strip {
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
       gap: 16px;
     }
-    h1 { font-size: 1.5rem; font-weight: 700; color: var(--text); }
-    .subtitle { font-size: 0.875rem; color: var(--text-muted); margin-top: 4px; }
-    .badge {
+    @media (min-width: 768px) {
+      .hero-strip {
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+      }
+    }
+    .kicker {
       font-size: 0.75rem;
       font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 6px;
-      background: #eff6ff;
-      color: #1d4ed8;
-      border: 1px solid #dbeafe;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
     }
-    .grid {
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+    @media (min-width: 640px) { h1 { font-size: 2rem; } }
+    .hero-desc {
+      font-size: 0.875rem;
+      color: #475569;
+      margin-top: 6px;
+      max-width: 42rem;
+    }
+    /* 2-Column Split Grid */
+    .dashboard-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 24px;
-      margin-bottom: 24px;
     }
-    @media (max-width: 800px) {
-      .grid { grid-template-columns: 1fr; }
+    @media (min-width: 1024px) {
+      .dashboard-grid { grid-template-columns: 1fr 1fr; }
     }
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 24px;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    .card-title {
-      font-size: 1.125rem;
-      font-weight: 600;
-      margin-bottom: 16px;
+    .card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #f1f5f9;
     }
-    .form-group { margin-bottom: 16px; }
-    label {
+    .card-title-lockup {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .badge-valid {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #047857;
+      background-color: var(--emerald-bg);
+      border: 1px solid var(--emerald-border);
+      padding: 2px 10px;
+      border-radius: 6px;
+    }
+    .badge-invalid {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #be123c;
+      background-color: var(--rose-bg);
+      border: 1px solid var(--rose-border);
+      padding: 2px 10px;
+      border-radius: 6px;
+    }
+    /* Presets */
+    .presets-container { margin-bottom: 20px; }
+    .presets-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       display: block;
-      font-size: 0.875rem;
+      margin-bottom: 8px;
+    }
+    .presets-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .btn-preset {
+      padding: 4px 10px;
+      font-size: 0.75rem;
       font-weight: 500;
       color: #334155;
-      margin-bottom: 6px;
-    }
-    input[type="number"], select {
-      width: 100%;
-      padding: 10px 12px;
+      background: #f1f5f9;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.95rem;
+      border-radius: 6px;
+      cursor: pointer;
       font-family: inherit;
-      background: #ffffff;
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      transition: background-color 0.15s;
     }
-    input[type="number"]:focus, select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    .btn-preset:hover { background: #e2e8f0; }
+    /* Form Inputs */
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 640px) {
+      .inputs-grid { grid-template-columns: 1fr 1fr; }
+      .col-span-2 { grid-column: span 2; }
+    }
+    .form-group { display: flex; flex-direction: column; }
+    label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 4px;
+    }
+    .input-wrapper { position: relative; }
+    .input-prefix {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      padding-left: 12px;
+      display: flex;
+      align-items: center;
+      pointer-events: none;
+      color: #94a3b8;
+      font-size: 0.75rem;
+    }
+    input[type="number"], select, input[type="text"] {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 0.875rem;
+      color: var(--text-main);
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+    }
+    .input-with-prefix { padding-left: 28px !important; }
+    input[type="number"]:focus, select:focus, input[type="text"]:focus {
+      background: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.15);
+    }
+    .field-hint {
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .options-section {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
     .checkbox-label {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.875rem;
+      gap: 10px;
+      font-size: 0.75rem;
+      color: #334155;
       cursor: pointer;
       user-select: none;
-      margin-top: 8px;
     }
-    .metrics-list { display: flex; flex-direction: column; gap: 12px; }
-    .metric-row {
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    /* Metric Rows */
+    .metric-rows-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .metric-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 14px;
+      padding: 10px 12px;
       background: #f8fafc;
       border-radius: 8px;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .metric-item-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #475569;
+    }
+    .metric-item-val {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .progress-wrapper { margin-top: 8px; }
+    .progress-label-bar {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      background: #f1f5f9;
+      border-radius: 9999px;
+      overflow: hidden;
       border: 1px solid var(--border);
     }
-    .metric-label { font-size: 0.875rem; color: var(--text-muted); }
-    .metric-value {
-      font-size: 1rem;
-      font-weight: 600;
-      font-family: monospace;
-      font-variant-numeric: tabular-nums;
-    }
-    .capacity-bar {
-      height: 8px;
-      background: #e2e8f0;
-      border-radius: 999px;
-      overflow: hidden;
-      margin-top: 12px;
-    }
-    .capacity-fill {
+    .progress-fill {
       height: 100%;
-      background: var(--accent);
+      background: var(--primary);
+      border-radius: 9999px;
       transition: width 0.3s ease;
     }
-    .error-banner {
-      background: var(--danger-bg);
-      border: 1px solid var(--danger-border);
-      color: var(--danger);
-      padding: 14px 16px;
-      border-radius: 8px;
-      font-size: 0.875rem;
+    .alert-error {
       margin-top: 16px;
+      padding: 16px;
+      background: var(--rose-bg);
+      border: 1px solid var(--rose-border);
+      border-radius: 8px;
+      color: var(--rose-text);
+      font-size: 0.75rem;
+      line-height: 1.5;
       display: none;
     }
-    .actions-bar {
+    .alert-error-title {
+      font-weight: 700;
+      margin-bottom: 4px;
       display: flex;
-      gap: 12px;
-      margin-top: 24px;
-      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
     }
-    button.btn-primary {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      font-size: 0.95rem;
-      font-weight: 600;
+    .guarantee-note {
+      margin-top: 16px;
+      padding: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
       border-radius: 8px;
+      color: #475569;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /* Buttons */
+    .actions-stack {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-main {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: var(--primary);
+      border: none;
       cursor: pointer;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
       transition: background-color 0.15s, transform 0.05s;
+      font-family: inherit;
     }
-    button.btn-primary:hover:not(:disabled) {
-      background: var(--primary-hover);
+    .btn-main:hover:not(:disabled) { background: var(--primary-hover); }
+    .btn-main:active:not(:disabled) { transform: translateY(1px); }
+    .btn-main:disabled {
+      background: #cbd5e1;
+      color: #64748b;
+      cursor: not-allowed;
+      box-shadow: none;
     }
-    button.btn-primary:active:not(:disabled) {
-      transform: translateY(1px);
+    .btn-secondary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
     }
-    button:disabled {
+    .btn-sub {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      font-family: inherit;
+      transition: background-color 0.15s;
+    }
+    .btn-sub:hover:not(:disabled) { background: #f8fafc; }
+    .btn-sub:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
-    button.btn-secondary {
-      background: white;
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 12px 20px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.15s;
+    /* Preview Table Card */
+    .preview-card {
+      margin-top: 24px;
+      display: none;
     }
-    button.btn-secondary:hover:not(:disabled) {
+    .table-controls-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    @media (min-width: 640px) {
+      .table-controls-bar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+    .table-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .search-input-wrap {
+      position: relative;
+      width: 140px;
+    }
+    @media (min-width: 640px) { .search-input-wrap { width: 170px; } }
+    .search-input-wrap input {
+      padding: 6px 10px 6px 28px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+    }
+    .search-icon {
+      position: absolute;
+      left: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      pointer-events: none;
+    }
+    .row-selector {
+      display: flex;
+      align-items: center;
+      gap: 2px;
       background: #f1f5f9;
+      padding: 2px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
     }
-    .table-container {
-      overflow-x: auto;
-      margin-top: 16px;
+    .row-btn {
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: #475569;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .row-btn.active {
+      background: #ffffff;
+      color: var(--text-main);
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    .audit-strip {
+      margin: 16px 0;
+      padding: 10px 14px;
+      background: var(--emerald-bg);
+      border: 1px solid var(--emerald-border);
+      border-radius: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--emerald-text);
+    }
+    .table-scroll {
       border: 1px solid var(--border);
       border-radius: 8px;
+      overflow-x: auto;
+      background: #ffffff;
     }
     table {
       width: 100%;
       border-collapse: collapse;
+      font-size: 0.75rem;
       text-align: left;
-      font-size: 0.875rem;
     }
     th {
-      background: #f1f5f9;
-      padding: 10px 14px;
+      background: #f8fafc;
+      padding: 10px 16px;
       font-weight: 600;
-      border-bottom: 1px solid var(--border);
       color: #334155;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
     }
     td {
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
-      font-family: monospace;
+      padding: 10px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
     }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: #f8fafc; }
-    .audit-box {
-      margin-top: 16px;
-      padding: 10px 14px;
-      background: var(--success-bg);
-      border: 1px solid var(--success-border);
-      color: var(--success);
-      border-radius: 8px;
-      font-size: 0.85rem;
+    .num-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #f1f5f9;
+      color: #1e293b;
+      font-weight: 600;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+      font-size: 0.75rem;
+    }
+    .btn-ticket-view {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      font-size: 11px;
       font-weight: 500;
+      color: #334155;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-ticket-view:hover { background: #e2e8f0; color: #0f172a; }
+    .table-foot {
+      margin-top: 12px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    /* Pipeline Strip */
+    .pipeline-strip {
+      margin-top: 32px;
+      padding: 24px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .pipeline-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      font-size: 0.75rem;
+      color: #475569;
+    }
+    @media (min-width: 768px) {
+      .pipeline-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .pipeline-step-title {
+      font-weight: 600;
+      color: #1e293b;
+      display: block;
+      margin-bottom: 4px;
+    }
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-card {
+      background: #ffffff;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+    }
+    .modal-top {
+      padding: 16px 24px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-heading {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-close-btn:hover { background: #e2e8f0; color: #0f172a; }
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      background: #f8fafc;
+    }
+    .modal-bottom {
+      padding: 14px 24px;
+      background: #f8fafc;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    /* Physical Ticket Representation */
+    .ticket-physical {
+      display: flex;
+      flex-direction: column;
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    @media (min-width: 640px) {
+      .ticket-physical { flex-direction: row; }
+    }
+    .ticket-stub {
+      padding: 16px;
+      background: #f8fafc;
+      border-bottom: 1px dashed #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    @media (min-width: 640px) {
+      .ticket-stub {
+        width: 33.333%;
+        border-bottom: none;
+        border-right: 1px dashed #cbd5e1;
+      }
+    }
+    .ticket-main {
+      padding: 24px;
+      background: #ffffff;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .ticket-num-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      font-weight: 700;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin-top: 10px;
+    }
+    .ticket-boxes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+    @media (min-width: 640px) {
+      .ticket-boxes-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    .ticket-num-box {
+      background: var(--primary);
+      color: #ffffff;
+      padding: 10px 8px;
+      border-radius: 8px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .num-box-label {
+      font-size: 9px;
+      color: var(--amber);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .num-box-val {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      margin-top: 2px;
+    }
+    /* Guide Modal Styling */
+    .guide-box {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      background: #ffffff;
+      margin-bottom: 16px;
+    }
+    .guide-box-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .guide-icon-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .guide-list {
+      list-style-type: decimal;
+      padding-left: 20px;
+      font-size: 0.75rem;
+      color: #475569;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    footer {
+      margin-top: auto;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      padding: 16px 24px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
       gap: 8px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
+  <!-- Header adhering to Top Bar Contract -->
+  <header>
+    <div class="brand-zone">
+      <div class="brand-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
+      </div>
+      <span class="brand-title">RafflePrint Studio</span>
+    </div>
+
+    <nav class="nav-links">
+      <button type="button" class="nav-btn" onclick="openGuideModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+        <span>Canva & Merge Guide</span>
+      </button>
+      <span style="color: var(--text-subtle);">·</span>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">Fisher-Yates 0-Duplicate Engine</span>
+    </nav>
+
+    <div class="header-actions">
+      <button type="button" class="btn-sub" onclick="openGuideModal()">
+        Workflow Guide
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Viewport -->
+  <main>
+    <div class="hero-strip">
       <div>
+        <div class="kicker">
+          <span>Variable Data Printing Studio</span>
+          <span>·</span>
+          <span>Canva & InDesign Ready</span>
+        </div>
         <h1>Raffle Ticket Variable Data CSV Generator</h1>
-        <div class="subtitle">Generates guaranteed zero-duplicate winning numbers with formatted leading zeros for Canva, InDesign, and Mail Merge</div>
+        <p class="hero-desc">
+          Generate randomized, zero-duplicate winning numbers formatted with fixed-width leading zeros for seamless bulk creation in Canva, Microsoft Word Mail Merge, and Adobe InDesign.
+        </p>
       </div>
-      <div class="badge">Fisher-Yates Certified Unbiased</div>
-    </header>
+      <div>
+        <button type="button" class="btn-sub" onclick="openGuideModal()">
+          Open Step-by-Step Guide
+        </button>
+      </div>
+    </div>
 
-    <div class="grid">
-      <!-- Input Controls -->
+    <!-- 2-Column Split Dashboard -->
+    <div class="dashboard-grid">
+      <!-- Left: Inputs -->
       <div class="card">
-        <div class="card-title">1. Configuration Controls</div>
-        <div class="form-group">
-          <label for="startTicket">Starting Ticket Number</label>
-          <input type="number" id="startTicket" value="1" min="1">
-        </div>
-        <div class="form-group">
-          <label for="endTicket">Ending Ticket Number</label>
-          <input type="number" id="endTicket" value="2500" min="1">
-        </div>
-        <div class="form-group">
-          <label for="numsPerTicket">Winning Numbers Per Ticket</label>
-          <input type="number" id="numsPerTicket" value="4" min="1" max="20">
-        </div>
-        <div class="form-group">
-          <label for="minRange">Minimum Winning Number Range</label>
-          <input type="number" id="minRange" value="0" min="0">
-        </div>
-        <div class="form-group">
-          <label for="maxRange">Maximum Winning Number Range</label>
-          <input type="number" id="maxRange" value="9999" min="0">
-        </div>
-        <div class="form-group">
-          <label class="checkbox-label">
-            <input type="checkbox" id="sortNumbers" checked>
-            Sort winning numbers on each ticket ascending
-          </label>
+        <div>
+          <div class="card-header">
+            <div class="card-title-lockup">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="1" x2="7" y1="14" y2="14"/><line x1="9" x2="15" y1="8" y2="8"/><line x1="17" x2="23" y1="16" y2="16"/></svg>
+              <h2 class="card-title">1. Ticket & Pool Parameters</h2>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">Input Controls</span>
+          </div>
+
+          <!-- Presets -->
+          <div class="presets-container">
+            <span class="presets-label">Quick Presets</span>
+            <div class="presets-row">
+              <button type="button" class="btn-preset" onclick="applyPreset(1, 2500, 4, 0, 9999)">
+                Default (2,500 × 4 nums, 0000–9999)
+              </button>
+              <button type="button" class="btn-preset" onclick="applyPreset(1, 1000, 1, 0, 999)">
+                Classic 50/50 (1,000 × 1 num)
+              </button>
+              <button type="button" class="btn-preset" onclick="applyPreset(1, 500, 6, 0, 9999)">
+                Gala Draw (500 × 6 nums)
+              </button>
+            </div>
+          </div>
+
+          <!-- Form Fields Grid -->
+          <div class="inputs-grid">
+            <div class="form-group">
+              <label for="startTicket">Starting Ticket Number</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">#</span>
+                <input type="number" id="startTicket" class="font-mono input-with-prefix" value="1" min="1">
+              </div>
+              <span class="field-hint">First sequential ticket index</span>
+            </div>
+
+            <div class="form-group">
+              <label for="endTicket">Ending Ticket Number</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">#</span>
+                <input type="number" id="endTicket" class="font-mono input-with-prefix" value="2500" min="1">
+              </div>
+              <span class="field-hint">Last sequential ticket index</span>
+            </div>
+
+            <div class="form-group col-span-2">
+              <label for="numsPerTicket">Winning Numbers Per Ticket</label>
+              <input type="number" id="numsPerTicket" class="font-mono" value="4" min="1" max="25">
+              <span class="field-hint" id="colHint">Columns generated: Winning_Num_1 through Winning_Num_4</span>
+            </div>
+
+            <div class="form-group">
+              <label for="minRange">Minimum Winning Number Range</label>
+              <input type="number" id="minRange" class="font-mono" value="0" min="0">
+              <span class="field-hint">Default 0 (e.g. 0000)</span>
+            </div>
+
+            <div class="form-group">
+              <label for="maxRange">Maximum Winning Number Range</label>
+              <input type="number" id="maxRange" class="font-mono" value="9999" min="0">
+              <span class="field-hint" id="digitHint">Defines digit padding length (4 digits)</span>
+            </div>
+          </div>
+
+          <!-- Options -->
+          <div class="options-section">
+            <span class="presets-label">Print & Export Options</span>
+            <label class="checkbox-label">
+              <input type="checkbox" id="sortNums" checked>
+              <span>Sort winning numbers on each ticket in ascending order (recommended for easy matching)</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="padTicket" >
+              <span>Zero-pad Ticket_Number to match ending ticket length (e.g. 0001 instead of 1)</span>
+            </label>
+            <div style="margin-top: 4px;">
+              <label for="exportFormat">CSV Format Compatibility</label>
+              <select id="exportFormat">
+                <option value="standard" selected>Standard Quoted CSV ("0042") — Recommended for Canva, InDesign, Word</option>
+                <option value="excel" >Excel Formula CSV (="0042") — Preserves zeros on direct Excel double-click</option>
+                <option value="tsv" >Tab-Separated Values (.tsv) — Raw tab-delimited text</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Live Pool Metrics & Validation -->
+      <!-- Right: Metrics & Validation -->
       <div class="card">
-        <div class="card-title">2. Pool Capacity & Math Check</div>
-        <div class="metrics-list">
-          <div class="metric-row">
-            <span class="metric-label">Total Tickets Needed</span>
-            <span class="metric-value" id="dispTotalTickets">2,500</span>
+        <div>
+          <div class="card-header">
+            <div class="card-title-lockup">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+              <h2 class="card-title">2. Business Logic & Pool Validation</h2>
+            </div>
+            <span id="poolBadge" class="badge-valid">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+              Pool Capacity Valid
+            </span>
           </div>
-          <div class="metric-row">
-            <span class="metric-label">Unique Winning Numbers Needed</span>
-            <span class="metric-value" id="dispTotalNeeded">10,000</span>
+
+          <div class="metric-rows-stack">
+            <div class="metric-item">
+              <span class="metric-item-label">Total Tickets Needed</span>
+              <span class="metric-item-val font-mono" id="dispTickets">2,500</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-item-label">Unique Winning Numbers Needed</span>
+              <span class="metric-item-val font-mono" id="dispNeeded">10,000</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-item-label">Available Numbers in Pool Range</span>
+              <span class="metric-item-val font-mono" id="dispCapacity">10,000</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-item-label">Formatted Number Length</span>
+              <span class="metric-item-val font-mono" id="dispDigits">4 digits (e.g. 0005)</span>
+            </div>
+
+            <!-- Progress Meter -->
+            <div class="progress-wrapper">
+              <div class="progress-label-bar">
+                <span>Pool Utilization</span>
+                <span class="font-mono" id="dispUtil">100.0%</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" id="progressFill" style="width: 100%;"></div>
+              </div>
+            </div>
           </div>
-          <div class="metric-row">
-            <span class="metric-label">Available Pool Capacity</span>
-            <span class="metric-value" id="dispPoolCapacity">10,000</span>
+
+          <!-- Red Shortfall Error Banner -->
+          <div id="errorBanner" class="alert-error">
+            <div class="alert-error-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+              <span>Configuration Shortfall</span>
+            </div>
+            <p id="errorText"></p>
           </div>
-          <div class="metric-row">
-            <span class="metric-label">Leading Zero Padding Digits</span>
-            <span class="metric-value" id="dispDigitLength">4 digits (e.g. 0005)</span>
-          </div>
-          <div class="metric-row">
-            <span class="metric-label">Pool Utilization</span>
-            <span class="metric-value" id="dispUtilization">100.0%</span>
+
+          <!-- Zero Duplicate Guarantee Note -->
+          <div id="guaranteeNote" class="guarantee-note">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span><strong>Zero Duplicate Guarantee:</strong> Fisher-Yates array permutation ensures 100% unique numbers across all tickets.</span>
           </div>
         </div>
 
-        <div class="capacity-bar">
-          <div class="capacity-fill" id="capacityFill" style="width: 100%;"></div>
-        </div>
+        <!-- Action Buttons -->
+        <div class="actions-stack">
+          <button type="button" id="btnGenerate" class="btn-main" onclick="handleGenerateAction(true)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <span>Generate & Download CSV</span>
+          </button>
 
-        <div id="errorBanner" class="error-banner"></div>
-
-        <div class="actions-bar">
-          <button id="btnGenerate" class="btn-primary" onclick="handleGenerateAndDownload()">Generate & Download CSV</button>
-          <button id="btnPreview" class="btn-secondary" onclick="handlePreviewOnly()">Preview Only</button>
+          <div class="btn-secondary-grid">
+            <button type="button" id="btnPreview" class="btn-sub" onclick="handleGenerateAction(false)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span>Preview Table</span>
+            </button>
+            <button type="button" class="btn-sub" onclick="openGuideModal()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-0.5-5.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+              <span>Printing Guide</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Preview Table Card -->
-    <div class="card" id="previewCard" style="display: none;">
-      <div class="card-title">
-        <span>3. Interactive Preview (First 5 Rows)</span>
-        <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);" id="previewTimestamp"></span>
+    <div class="card preview-card" id="previewCard">
+      <div class="table-controls-bar">
+        <div>
+          <div class="card-title-lockup">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></svg>
+            <h2 class="card-title">3. Interactive Preview Table</h2>
+          </div>
+          <p id="tableSubtext" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
+            Displaying first 5 generated rows of tickets
+          </p>
+        </div>
+
+        <div class="table-actions">
+          <!-- Search box -->
+          <div class="search-input-wrap">
+            <svg class="search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="searchInput" placeholder="Search ticket #..." oninput="handleSearch()">
+          </div>
+
+          <!-- Row Selector -->
+          <div class="row-selector" id="rowSelectorContainer">
+            <button type="button" class="row-btn active" onclick="setRowCount(5)">5 rows</button>
+            <button type="button" class="row-btn" onclick="setRowCount(10)">10 rows</button>
+            <button type="button" class="row-btn" onclick="setRowCount(25)">25 rows</button>
+          </div>
+
+          <!-- Copy Preview Button -->
+          <button type="button" class="btn-sub" id="btnCopy" onclick="copyPreviewCsv()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span id="copyBtnText">Copy Preview</span>
+          </button>
+
+          <!-- Download CSV -->
+          <button type="button" class="btn-sub" style="background: var(--primary); color: #ffffff; border-color: var(--primary);" onclick="downloadCurrentCsv()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <span>Download CSV</span>
+          </button>
+        </div>
       </div>
-      <div class="table-container">
-        <table id="previewTable">
-          <thead id="previewTableHead"></thead>
-          <tbody id="previewTableBody"></tbody>
+
+      <!-- Audit Banner -->
+      <div class="audit-strip">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          <span><strong>Fisher-Yates Audit Passed:</strong> All <span id="auditUniqueCount">10,000</span> winning numbers are mathematically unique across the batch with zero collisions.</span>
+        </div>
+        <span class="font-mono" style="font-size: 11px;" id="auditTime">Shuffle runtime: 3.2 ms</span>
+      </div>
+
+      <!-- Table Scroll -->
+      <div class="table-scroll">
+        <table>
+          <thead id="previewThead"></thead>
+          <tbody id="previewTbody"></tbody>
         </table>
       </div>
-      <div id="auditBox" class="audit-box">
-        <span>✓ <strong>Audit Verified:</strong> Zero duplicate numbers across entire pool. Ready for variable printing.</span>
+
+      <div class="table-foot">
+        <span>Leading zero format verified: values enclosed in quotes to prevent Excel from dropping initial zeros.</span>
+        <span id="footExtraCount"></span>
+      </div>
+    </div>
+
+    <!-- Pipeline Guidance Strip -->
+    <div class="pipeline-strip">
+      <div class="pipeline-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+        <span>Standard Ticket Variable Printing Pipeline</span>
+      </div>
+      <div class="pipeline-grid">
+        <div>
+          <span class="pipeline-step-title">1. Define Pool & Quantities</span>
+          <p>Configure your starting and ending tickets and how many winning number chances each ticket contains (e.g. 4 numbers per ticket).</p>
+        </div>
+        <div>
+          <span class="pipeline-step-title">2. Fisher-Yates Permutation</span>
+          <p>The engine shuffles the entire number pool with zero duplicate occurrences, guaranteeing that no winning number appears twice across any ticket.</p>
+        </div>
+        <div>
+          <span class="pipeline-step-title">3. Variable Merge Export</span>
+          <p>Export standard quoted CSV formatted with leading zeros (e.g. <code style="font-family: var(--font-mono); background: #f1f5f9; padding: 2px 4px; border-radius: 4px;">"0005"</code>) ready for Canva Bulk Create, Word Mail Merge, or commercial print RIPs.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Physical Ticket Mockup Modal -->
+  <div class="modal-overlay" id="mockupModal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <div class="modal-heading">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg>
+          <span id="mockupModalTitle">Physical Variable Ticket Preview</span>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeMockupModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 16px; text-align: center;">
+          This demonstrates how your variable data fields (<span class="font-mono">Ticket_Number</span> and <span class="font-mono">Winning_Num_1..k</span>) map to a physical perforated ticket design.
+        </p>
+
+        <div class="ticket-physical">
+          <!-- Stub -->
+          <div class="ticket-stub">
+            <div>
+              <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #94a3b8; display: block; margin-bottom: 4px;">Organizer Stub</span>
+              <div style="font-size: 0.75rem; font-weight: 600; color: #1e293b;">Charity Gala Raffle</div>
+              <div class="ticket-num-badge font-mono" id="stubTicketNum">TICKET #1</div>
+
+              <div style="margin-top: 16px; border-top: 1px solid #e2e8f0; padding-top: 12px; font-size: 11px; color: #64748b; display: flex; flex-direction: column; gap: 8px;">
+                <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">Name: _________________</div>
+                <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">Phone: ________________</div>
+                <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">Email: _________________</div>
+              </div>
+            </div>
+            <span style="font-size: 9px; color: #94a3b8; margin-top: 16px; display: block;">Keep this stub for drawer audit</span>
+          </div>
+
+          <!-- Main Ticket -->
+          <div class="ticket-main">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                  <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #d97706; font-family: var(--font-mono);">Official Drawing Entry</span>
+                  <div style="font-size: 1rem; font-weight: 800; color: #0f172a; margin-top: 2px;">Annual Grand Prize Raffle</div>
+                  <div style="font-size: 0.75rem; color: #64748b;">Benefiting Community Youth Programs</div>
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-size: 10px; font-weight: 700; color: #94a3b8; display: block;">TICKET</span>
+                  <span class="font-mono" style="font-size: 1.125rem; font-weight: 900; color: #0f172a;" id="bodyTicketNum">#1</span>
+                </div>
+              </div>
+
+              <!-- Boxes -->
+              <div style="margin-top: 20px;">
+                <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: #475569; display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+                  <span id="mockupChancesText">Assigned Winning Numbers (4 chances)</span>
+                </div>
+                <div class="ticket-boxes-grid" id="mockupBoxesGrid"></div>
+              </div>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 12px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8;">
+              <span>Hold ticket to claim prize</span>
+              <span>Zero-Duplicate Verified</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-bottom">
+        <span class="font-mono" style="font-size: 0.75rem; color: #64748b;" id="mockupNumList"></span>
+        <button type="button" class="btn-sub" onclick="closeMockupModal()">Close Preview</button>
       </div>
     </div>
   </div>
 
+  <!-- Printing & Workflow Guide Modal -->
+  <div class="modal-overlay" id="guideModal">
+    <div class="modal-card" style="max-width: 760px;">
+      <div class="modal-top">
+        <div class="modal-heading">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-0.5-5.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+          <span>Variable Data Printing & Mail Merge Guide</span>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeGuideModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body" style="background: #ffffff;">
+        <!-- Leading zeros note -->
+        <div style="padding: 16px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 12px; margin-bottom: 20px;">
+          <div style="font-size: 0.875rem; font-weight: 700; color: #92400e; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>How Leading Zeros Are Preserved</span>
+          </div>
+          <p style="font-size: 0.75rem; color: #b45309; line-height: 1.5;">
+            When opened normally, spreadsheet programs like Excel often coerce <code style="font-family: var(--font-mono); background: #fef3c7; padding: 2px 4px; border-radius: 4px;">0042</code> into the integer <code style="font-family: var(--font-mono); background: #fef3c7; padding: 2px 4px; border-radius: 4px;">42</code>. Our generator encapsulates every number inside text quotes (e.g. <code style="font-family: var(--font-mono); background: #fef3c7; padding: 2px 4px; border-radius: 4px;">"0042"</code>) and includes a UTF-8 BOM. When imported into Canva, InDesign, or Word, it is recognized as a fixed-length string, preserving every zero on your printed tickets.
+          </p>
+        </div>
+
+        <!-- Canva Guide -->
+        <div class="guide-box">
+          <div class="guide-box-title">
+            <div class="guide-icon-badge" style="background: #9333ea;">C</div>
+            <span>Canva Bulk Create (Variable Printing)</span>
+          </div>
+          <ol class="guide-list">
+            <li>In Canva, design your raffle ticket with text placeholders for your ticket number and winning numbers.</li>
+            <li>Click on the <strong>Apps</strong> tab on the left sidebar and search for <strong>Bulk Create</strong>.</li>
+            <li>Select <strong>Upload CSV</strong> and pick the file downloaded from this generator.</li>
+            <li>Right-click each text box on your canvas, choose <strong>Connect data</strong>, and link to <code style="font-family: var(--font-mono); background: #f1f5f9; padding: 2px 4px; border-radius: 4px;">Ticket_Number</code>, <code style="font-family: var(--font-mono); background: #f1f5f9; padding: 2px 4px; border-radius: 4px;">Winning_Num_1</code>, etc.</li>
+            <li>Click <strong>Continue</strong> and then <strong>Generate Pages</strong>. Canva will create all tickets in batch!</li>
+          </ol>
+        </div>
+
+        <!-- Word Mail Merge -->
+        <div class="guide-box">
+          <div class="guide-box-title">
+            <div class="guide-icon-badge" style="background: #2563eb;">W</div>
+            <span>Microsoft Word Mail Merge</span>
+          </div>
+          <ol class="guide-list">
+            <li>Open your ticket template in Word (or use a multi-up perforated label sheet).</li>
+            <li>Go to the <strong>Mailings</strong> tab &gt; <strong>Select Recipients</strong> &gt; <strong>Use an Existing List...</strong></li>
+            <li>Select your downloaded CSV.</li>
+            <li>Insert Merge Fields: <code style="font-family: var(--font-mono); background: #f1f5f9; padding: 2px 4px; border-radius: 4px;">&laquo;Ticket_Number&raquo;</code> and each <code style="font-family: var(--font-mono); background: #f1f5f9; padding: 2px 4px; border-radius: 4px;">&laquo;Winning_Num_1&raquo;</code>.</li>
+            <li>Click <strong>Finish & Merge</strong> to print or export as PDF.</li>
+          </ol>
+        </div>
+
+        <!-- InDesign -->
+        <div class="guide-box">
+          <div class="guide-box-title">
+            <div class="guide-icon-badge" style="background: #be185d;">Id</div>
+            <span>Adobe InDesign Data Merge</span>
+          </div>
+          <ol class="guide-list">
+            <li>Open Window &gt; Utilities &gt; <strong>Data Merge</strong>.</li>
+            <li>From the panel menu, choose <strong>Select Data Source</strong> and pick the CSV file.</li>
+            <li>Drag the fields into your master ticket frame.</li>
+            <li>Choose <strong>Create Merged Document</strong> to generate single or multi-record sheets with crop marks.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="modal-bottom" style="justify-content: flex-end;">
+        <button type="button" class="btn-main" style="width: auto; padding: 8px 20px;" onclick="closeGuideModal()">Got It</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <span>Raffle Ticket Variable Data Printing Utility</span>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button type="button" class="nav-btn" onclick="openGuideModal()">Printing Guide</button>
+      <span>·</span>
+      <span>Fisher-Yates Certified</span>
+    </div>
+  </footer>
+
   <script>
-    // Business Logic Implementation
+    // State
+    let generatedData = null;
+    let visibleRowCount = 5;
+    let currentSearchTerm = '';
+
     function getInputs() {
       return {
         start: parseInt(document.getElementById('startTicket').value, 10),
@@ -339,111 +1316,132 @@
         k: parseInt(document.getElementById('numsPerTicket').value, 10),
         min: parseInt(document.getElementById('minRange').value, 10),
         max: parseInt(document.getElementById('maxRange').value, 10),
-        sortNums: document.getElementById('sortNumbers').checked
+        sortNums: document.getElementById('sortNums').checked,
+        padTicket: document.getElementById('padTicket').checked,
+        format: document.getElementById('exportFormat').value
       };
     }
 
+    function applyPreset(start, end, k, min, max) {
+      document.getElementById('startTicket').value = start;
+      document.getElementById('endTicket').value = end;
+      document.getElementById('numsPerTicket').value = k;
+      document.getElementById('minRange').value = min;
+      document.getElementById('maxRange').value = max;
+      generatedData = null;
+      document.getElementById('previewCard').style.display = 'none';
+      updateCalculations();
+    }
+
     function updateCalculations() {
-      const { start, end, k, min, max } = getInputs();
-      const errorDiv = document.getElementById('errorBanner');
+      const inputs = getInputs();
+      const { start, end, k, min, max } = inputs;
+
+      const errorBanner = document.getElementById('errorBanner');
+      const errorText = document.getElementById('errorText');
+      const guaranteeNote = document.getElementById('guaranteeNote');
+      const poolBadge = document.getElementById('poolBadge');
       const btnGen = document.getElementById('btnGenerate');
       const btnPrev = document.getElementById('btnPreview');
 
+      document.getElementById('colHint').textContent = 'Columns generated: Winning_Num_1 through Winning_Num_' + (k || 1);
+      const digitLen = String(Math.abs(max || 0)).length;
+      document.getElementById('digitHint').textContent = 'Defines digit padding length (' + digitLen + ' digits)';
+
       if (isNaN(start) || isNaN(end) || isNaN(k) || isNaN(min) || isNaN(max)) {
-        errorDiv.textContent = 'Please provide valid numerical inputs.';
-        errorDiv.style.display = 'block';
-        btnGen.disabled = true;
-        btnPrev.disabled = true;
+        showError('Please enter valid numerical values in all input fields.');
         return null;
       }
-
       if (start < 1) {
-        errorDiv.textContent = 'Starting Ticket Number must be at least 1.';
-        errorDiv.style.display = 'block';
-        btnGen.disabled = true;
-        btnPrev.disabled = true;
+        showError('Starting Ticket Number must be at least 1.');
         return null;
       }
-
       if (end < start) {
-        errorDiv.textContent = 'Ending Ticket Number cannot be less than Starting Ticket Number.';
-        errorDiv.style.display = 'block';
-        btnGen.disabled = true;
-        btnPrev.disabled = true;
+        showError('Ending Ticket Number (' + end + ') cannot be less than Starting Ticket Number (' + start + ').');
         return null;
       }
-
       if (k < 1) {
-        errorDiv.textContent = 'Winning Numbers Per Ticket must be at least 1.';
-        errorDiv.style.display = 'block';
-        btnGen.disabled = true;
-        btnPrev.disabled = true;
+        showError('Winning Numbers Per Ticket must be at least 1.');
         return null;
       }
-
       if (min < 0) {
-        errorDiv.textContent = 'Minimum Winning Number Range cannot be negative.';
-        errorDiv.style.display = 'block';
-        btnGen.disabled = true;
-        btnPrev.disabled = true;
+        showError('Minimum Winning Number Range cannot be negative.');
         return null;
       }
-
       if (max < min) {
-        errorDiv.textContent = 'Maximum Winning Number Range must be greater than or equal to Minimum Range.';
-        errorDiv.style.display = 'block';
-        btnGen.disabled = true;
-        btnPrev.disabled = true;
+        showError('Maximum Winning Number Range (' + max + ') must be greater than or equal to Minimum Range (' + min + ').');
         return null;
       }
 
       const totalTickets = end - start + 1;
       const totalNeeded = totalTickets * k;
       const poolCapacity = max - min + 1;
-      const digitLength = String(Math.abs(max)).length;
 
-      document.getElementById('dispTotalTickets').textContent = totalTickets.toLocaleString();
-      document.getElementById('dispTotalNeeded').textContent = totalNeeded.toLocaleString();
-      document.getElementById('dispPoolCapacity').textContent = poolCapacity.toLocaleString();
-      document.getElementById('dispDigitLength').textContent = digitLength + ' digits (e.g. ' + '5'.padStart(digitLength, '0') + ')';
+      document.getElementById('dispTickets').textContent = totalTickets.toLocaleString();
+      document.getElementById('dispNeeded').textContent = totalNeeded.toLocaleString();
+      document.getElementById('dispCapacity').textContent = poolCapacity.toLocaleString();
+      document.getElementById('dispDigits').textContent = digitLen + ' digits (e.g. ' + '5'.padStart(digitLen, '0') + ')';
 
-      const utilPct = poolCapacity > 0 ? (totalNeeded / poolCapacity) * 100 : 0;
-      document.getElementById('dispUtilization').textContent = utilPct.toFixed(1) + '%';
-      document.getElementById('capacityFill').style.width = Math.min(100, utilPct) + '%';
-      document.getElementById('capacityFill').style.background = utilPct > 100 ? 'var(--danger)' : 'var(--accent)';
+      const util = poolCapacity > 0 ? (totalNeeded / poolCapacity) * 100 : 0;
+      document.getElementById('dispUtil').textContent = util > 100 ? util.toFixed(1) + '% (Over Capacity)' : util.toFixed(1) + '%';
+      
+      const fill = document.getElementById('progressFill');
+      fill.style.width = Math.min(100, Math.max(0, util)) + '%';
 
       if (poolCapacity < totalNeeded) {
         const shortfall = totalNeeded - poolCapacity;
-        errorDiv.innerHTML = '<strong>Pool Shortfall Error:</strong> You need <strong>' + totalNeeded.toLocaleString() + '</strong> unique winning numbers (' + totalTickets.toLocaleString() + ' tickets × ' + k + ' numbers/ticket), but the pool range (' + min.toLocaleString() + ' to ' + max.toLocaleString() + ') only offers <strong>' + poolCapacity.toLocaleString() + '</strong> numbers.<br><br>Shortfall: <strong>' + shortfall.toLocaleString() + '</strong> numbers. Please expand the number range or reduce tickets.';
-        errorDiv.style.display = 'block';
-        btnGen.disabled = true;
-        btnPrev.disabled = true;
+        fill.style.background = '#e11d48';
+        showError('Pool Shortfall: You require ' + totalNeeded.toLocaleString() + ' unique winning numbers (' + totalTickets.toLocaleString() + ' tickets × ' + k + ' numbers/ticket), but the pool range (' + min.toLocaleString() + ' to ' + max.toLocaleString() + ') only contains ' + poolCapacity.toLocaleString() + ' numbers. Shortfall: ' + shortfall.toLocaleString() + ' numbers. Please expand the number range or reduce tickets.');
         return null;
       }
 
-      errorDiv.style.display = 'none';
+      fill.style.background = util > 90 ? '#f59e0b' : 'var(--primary)';
+      errorBanner.style.display = 'none';
+      guaranteeNote.style.display = 'flex';
+      poolBadge.className = 'badge-valid';
+      poolBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Pool Capacity Valid';
       btnGen.disabled = false;
       btnPrev.disabled = false;
 
-      return { totalTickets, totalNeeded, poolCapacity, digitLength, start, end, k, min, max };
+      return { totalTickets, totalNeeded, poolCapacity, digitLen, ...inputs };
     }
 
-    function generateData(calc) {
-      const { totalTickets, totalNeeded, poolCapacity, digitLength, start, end, k, min, sortNums } = calc;
+    function showError(msg) {
+      const errorBanner = document.getElementById('errorBanner');
+      const errorText = document.getElementById('errorText');
+      const guaranteeNote = document.getElementById('guaranteeNote');
+      const poolBadge = document.getElementById('poolBadge');
+      const btnGen = document.getElementById('btnGenerate');
+      const btnPrev = document.getElementById('btnPreview');
+
+      errorText.textContent = msg;
+      errorBanner.style.display = 'block';
+      guaranteeNote.style.display = 'none';
+      poolBadge.className = 'badge-invalid';
+      poolBadge.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg> Shortfall Detected';
+      btnGen.disabled = true;
+      btnPrev.disabled = true;
+    }
+
+    function executeShuffle(calc) {
+      const startTime = performance.now();
+      const { totalTickets, totalNeeded, poolCapacity, digitLen, start, end, k, min, sortNums, padTicket } = calc;
+      const ticketPadLen = padTicket ? String(end).length : 0;
+
       const pool = new Int32Array(poolCapacity);
       for (let i = 0; i < poolCapacity; i++) {
         pool[i] = min + i;
       }
 
-      // Fisher-Yates Shuffle
+      // Fisher-Yates Permutation
       for (let i = 0; i < totalNeeded; i++) {
         const j = i + Math.floor(Math.random() * (poolCapacity - i));
-        const temp = pool[i];
+        const tmp = pool[i];
         pool[i] = pool[j];
-        pool[j] = temp;
+        pool[j] = tmp;
       }
 
-      const rows = [];
+      const tickets = [];
       let poolIdx = 0;
       for (let t = start; t <= end; t++) {
         const nums = [];
@@ -453,94 +1451,239 @@
         if (sortNums) {
           nums.sort(function(a, b) { return a - b; });
         }
-        const formatted = nums.map(function(n) { return String(n).padStart(digitLength, '0'); });
-        rows.push({
-          ticket: String(t),
-          numbers: formatted
-        });
+        const formatted = nums.map(function(n) { return String(n).padStart(digitLen, '0'); });
+        const ticketNum = ticketPadLen > 0 ? String(t).padStart(ticketPadLen, '0') : String(t);
+        tickets.push({ ticketNumber: ticketNum, winningNumbers: formatted });
       }
-      return rows;
+
+      const elapsed = Math.round((performance.now() - startTime) * 100) / 100;
+
+      return {
+        tickets: tickets,
+        calc: calc,
+        elapsed: elapsed,
+        totalUnique: totalNeeded
+      };
     }
 
-    function renderPreview(rows, k) {
+    function renderTable() {
+      if (!generatedData) return;
+      const { tickets, calc, elapsed, totalUnique } = generatedData;
+      const thead = document.getElementById('previewThead');
+      const tbody = document.getElementById('previewTbody');
       const previewCard = document.getElementById('previewCard');
-      const thead = document.getElementById('previewTableHead');
-      const tbody = document.getElementById('previewTableBody');
-      const timestamp = document.getElementById('previewTimestamp');
 
       previewCard.style.display = 'block';
-      timestamp.textContent = 'Generated: ' + new Date().toLocaleTimeString();
+      document.getElementById('auditUniqueCount').textContent = totalUnique.toLocaleString();
+      document.getElementById('auditTime').textContent = 'Shuffle runtime: ' + elapsed + ' ms';
 
-      // Headers
-      let headHtml = '<tr><th>Ticket_Number</th>';
-      for (let i = 1; i <= k; i++) {
+      // Header row
+      let headHtml = '<tr><th>Row</th><th>Ticket_Number</th>';
+      for (let i = 1; i <= calc.k; i++) {
         headHtml += '<th>Winning_Num_' + i + '</th>';
       }
-      headHtml += '</tr>';
+      headHtml += '<th style="text-align: right;">Physical Stub</th></tr>';
       thead.innerHTML = headHtml;
 
-      // First 5 rows
-      const displayRows = rows.slice(0, 5);
+      // Filter rows
+      let filtered = tickets;
+      if (currentSearchTerm.trim()) {
+        const query = currentSearchTerm.trim().toLowerCase();
+        filtered = tickets.filter(function(t) { return t.ticketNumber.toLowerCase().includes(query); });
+        document.getElementById('tableSubtext').textContent = 'Displaying ' + filtered.length + ' matches for "' + currentSearchTerm + '" of ' + tickets.length.toLocaleString() + ' total tickets';
+      } else {
+        filtered = tickets.slice(0, visibleRowCount);
+        document.getElementById('tableSubtext').textContent = 'Displaying first ' + visibleRowCount + ' generated rows of ' + tickets.length.toLocaleString() + ' total tickets';
+      }
+
       let bodyHtml = '';
-      displayRows.forEach(function(row) {
-        bodyHtml += '<tr><td><strong>#' + row.ticket + '</strong></td>';
-        row.numbers.forEach(function(num) {
-          bodyHtml += '<td>' + num + '</td>';
+      if (filtered.length === 0) {
+        bodyHtml = '<tr><td colspan="' + (calc.k + 3) + '" style="text-align: center; color: #94a3b8; padding: 32px;">No tickets match "' + currentSearchTerm + '".</td></tr>';
+      } else {
+        filtered.forEach(function(ticket, idx) {
+          bodyHtml += '<tr><td style="color: #94a3b8;">' + (idx + 1) + '</td>';
+          bodyHtml += '<td style="font-weight: 700; color: #0f172a;">#' + ticket.ticketNumber + '</td>';
+          ticket.winningNumbers.forEach(function(n) {
+            bodyHtml += '<td><span class="num-pill">' + n + '</span></td>';
+          });
+          bodyHtml += '<td style="text-align: right;"><button type="button" class="btn-ticket-view" onclick="viewTicketModal(\'' + ticket.ticketNumber + '\')">';
+          bodyHtml += '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg> View Ticket</button></td></tr>';
         });
-        bodyHtml += '</tr>';
-      });
+      }
       tbody.innerHTML = bodyHtml;
-      previewCard.scrollIntoView({ behavior: 'smooth' });
+
+      const footExtra = document.getElementById('footExtraCount');
+      if (tickets.length > visibleRowCount && !currentSearchTerm.trim()) {
+        footExtra.textContent = '+' + (tickets.length - visibleRowCount).toLocaleString() + ' more tickets included in exported CSV.';
+      } else {
+        footExtra.textContent = '';
+      }
     }
 
-    function handlePreviewOnly() {
-      const calc = updateCalculations();
-      if (!calc) return;
-      const inputs = getInputs();
-      calc.sortNums = inputs.sortNums;
-      const rows = generateData(calc);
-      renderPreview(rows, calc.k);
+    function setRowCount(count) {
+      visibleRowCount = count;
+      const btns = document.getElementById('rowSelectorContainer').querySelectorAll('.row-btn');
+      btns.forEach(function(b) {
+        b.classList.remove('active');
+        if (b.textContent.includes(String(count))) {
+          b.classList.add('active');
+        }
+      });
+      renderTable();
     }
 
-    function handleGenerateAndDownload() {
+    function handleSearch() {
+      currentSearchTerm = document.getElementById('searchInput').value;
+      renderTable();
+    }
+
+    function handleGenerateAction(andDownload) {
       const calc = updateCalculations();
       if (!calc) return;
-      const inputs = getInputs();
-      calc.sortNums = inputs.sortNums;
-      const rows = generateData(calc);
-      renderPreview(rows, calc.k);
+      generatedData = executeShuffle(calc);
+      renderTable();
+      document.getElementById('previewCard').scrollIntoView({ behavior: 'smooth' });
 
-      // Build CSV with retained leading zeros
-      let headers = ['Ticket_Number'];
+      if (andDownload) {
+        downloadCurrentCsv();
+      }
+    }
+
+    function downloadCurrentCsv() {
+      if (!generatedData) {
+        handleGenerateAction(true);
+        return;
+      }
+      const { tickets, calc } = generatedData;
+      const format = calc.format;
+      const delimiter = format === 'tsv' ? '\t' : ',';
+
+      const headers = ['Ticket_Number'];
       for (let i = 1; i <= calc.k; i++) {
         headers.push('Winning_Num_' + i);
       }
-      const csvLines = [headers.join(',')];
+      const lines = [headers.join(delimiter)];
 
-      rows.forEach(function(row) {
-        const line = ['"' + row.ticket + '"'];
-        row.numbers.forEach(function(n) {
-          line.push('"' + n + '"');
-        });
-        csvLines.push(line.join(','));
+      tickets.forEach(function(ticket) {
+        const row = [];
+        if (format === 'excel') {
+          row.push('="' + ticket.ticketNumber + '"');
+          ticket.winningNumbers.forEach(function(n) { row.push('="' + n + '"'); });
+        } else if (format === 'tsv') {
+          row.push(ticket.ticketNumber);
+          ticket.winningNumbers.forEach(function(n) { row.push(n); });
+        } else {
+          // Standard quoted CSV
+          row.push('"' + ticket.ticketNumber + '"');
+          ticket.winningNumbers.forEach(function(n) { row.push('"' + n + '"'); });
+        }
+        lines.push(row.join(delimiter));
       });
 
-      const csvContent = '\uFEFF' + csvLines.join('\r\n');
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const content = '\uFEFF' + lines.join('\r\n');
+      const isTsv = format === 'tsv';
+      const mime = isTsv ? 'text/tab-separated-values;charset=utf-8;' : 'text/csv;charset=utf-8;';
+      const blob = new Blob([content], { type: mime });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', 'raffle_tickets_' + calc.start + '_to_' + calc.end + '.csv');
+      link.href = url;
+      link.download = 'raffle_tickets_' + calc.start + '_to_' + calc.end + '_' + calc.k + 'nums.' + (isTsv ? 'tsv' : 'csv');
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     }
 
-    // Attach real-time input event listeners
+    function copyPreviewCsv() {
+      if (!generatedData) return;
+      const { tickets, calc } = generatedData;
+      let subset = tickets;
+      if (currentSearchTerm.trim()) {
+        const q = currentSearchTerm.trim().toLowerCase();
+        subset = tickets.filter(function(t) { return t.ticketNumber.toLowerCase().includes(q); });
+      } else {
+        subset = tickets.slice(0, visibleRowCount);
+      }
+
+      const headers = ['Ticket_Number'];
+      for (let i = 1; i <= calc.k; i++) {
+        headers.push('Winning_Num_' + i);
+      }
+      const lines = [headers.join(',')];
+      subset.forEach(function(t) {
+        const row = ['"' + t.ticketNumber + '"'];
+        t.winningNumbers.forEach(function(n) { row.push('"' + n + '"'); });
+        lines.push(row.join(','));
+      });
+
+      navigator.clipboard.writeText(lines.join('\n')).then(function() {
+        const btnText = document.getElementById('copyBtnText');
+        btnText.textContent = 'Copied!';
+        setTimeout(function() { btnText.textContent = 'Copy Preview'; }, 2000);
+      });
+    }
+
+    function viewTicketModal(ticketNumber) {
+      if (!generatedData) return;
+      const ticket = generatedData.tickets.find(function(t) { return t.ticketNumber === ticketNumber; });
+      if (!ticket) return;
+
+      document.getElementById('mockupModalTitle').textContent = 'Physical Variable Ticket Preview (Ticket #' + ticket.ticketNumber + ')';
+      document.getElementById('stubTicketNum').textContent = 'TICKET #' + ticket.ticketNumber;
+      document.getElementById('bodyTicketNum').textContent = '#' + ticket.ticketNumber;
+      document.getElementById('mockupChancesText').textContent = 'Assigned Winning Numbers (' + ticket.winningNumbers.length + ' chances)';
+      document.getElementById('mockupNumList').textContent = ticket.winningNumbers.length + ' numbers: ' + ticket.winningNumbers.join(', ');
+
+      const grid = document.getElementById('mockupBoxesGrid');
+      let html = '';
+      ticket.winningNumbers.forEach(function(n, idx) {
+        html += '<div class="ticket-num-box"><span class="num-box-label">Number ' + (idx + 1) + '</span><span class="num-box-val font-mono">' + n + '</span></div>';
+      });
+      grid.innerHTML = html;
+
+      document.getElementById('mockupModal').style.display = 'flex';
+    }
+
+    function closeMockupModal() {
+      document.getElementById('mockupModal').style.display = 'none';
+    }
+
+    function openGuideModal() {
+      document.getElementById('guideModal').style.display = 'flex';
+    }
+
+    function closeGuideModal() {
+      document.getElementById('guideModal').style.display = 'none';
+    }
+
+    // Initialize listeners
     ['startTicket', 'endTicket', 'numsPerTicket', 'minRange', 'maxRange'].forEach(function(id) {
-      document.getElementById(id).addEventListener('input', updateCalculations);
+      document.getElementById(id).addEventListener('input', function() {
+        generatedData = null;
+        document.getElementById('previewCard').style.display = 'none';
+        updateCalculations();
+      });
     });
+    document.getElementById('sortNums').addEventListener('change', function() {
+      if (generatedData) { handleGenerateAction(false); }
+    });
+    document.getElementById('padTicket').addEventListener('change', function() {
+      if (generatedData) { handleGenerateAction(false); }
+    });
+    document.getElementById('exportFormat').addEventListener('change', function() {
+      if (generatedData) {
+        generatedData.calc.format = document.getElementById('exportFormat').value;
+      }
+    });
+
+    // Close modals on clicking overlay background
+    document.getElementById('mockupModal').addEventListener('click', function(e) {
+      if (e.target === this) closeMockupModal();
+    });
+    document.getElementById('guideModal').addEventListener('click', function(e) {
+      if (e.target === this) closeGuideModal();
+    });
+
     updateCalculations();
   </script>
 </body>
